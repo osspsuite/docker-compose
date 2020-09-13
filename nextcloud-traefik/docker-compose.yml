@@ -1,7 +1,7 @@
 networks:
   traefik_proxy:
-    external:
-      name: traefik_proxy
+    external: true
+    name: traefik_proxy
 services:
   app:
     depends_on:
@@ -44,7 +44,7 @@ services:
     volumes:
     - /etc/localtime:/etc/localtime:ro
     - pgsql_data:/var/lib/postgresql/data:rw
-version: "2.4"
+version: "2.1"
 volumes:
   app_data: {}
   pgsql_data: {}
