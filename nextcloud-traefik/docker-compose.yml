@@ -6,23 +6,25 @@ services:
   app:
     depends_on:
     - db
+    - redis
     environment:
     - POSTGRES_DB=${DATABASE_NAME}
     - POSTGRES_USER=${DATABASE_USER}
     - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
     - POSTGRES_HOST=db
     - POSTGRES_PORT=5432
-    - NEXTCLOUD_ADMIN_USER
-    - NEXTCLOUD_ADMIN_PASSWORD
-    - NEXTCLOUD_TRUSTED_DOMAINS
+    - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_ADMIN_USER}
+    - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASSWORD}
+    - NEXTCLOUD_TRUSTED_DOMAINS=${NEXTCLOUD_PUBLIC_FQDN}
     - OVERWRITEHOST=${NEXTCLOUD_PUBLIC_FQDN}
     - OVERWRITEPROTOCOL=https
+    - REDIS_HOST=redis
     expose:
-    - "80"
+    - '80'
     image: nextcloud:19
     labels:
       traefik.docker.network: traefik_proxy
-      traefik.enable: "true"
+      traefik.enable: 'true'
       traefik.http.routers.nextcloud.entrypoints: websecure
       traefik.http.routers.nextcloud.rule: Host(`${NEXTCLOUD_PUBLIC_FQDN}`)
       traefik.http.routers.nextcloud.tls.certresolver: letsencrypt
@@ -44,7 +46,13 @@ services:
     volumes:
     - /etc/localtime:/etc/localtime:ro
     - pgsql_data:/var/lib/postgresql/data:rw
-version: "2.1"
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+    volumes:
+    - redis_data:/data
+version: '3.8'
 volumes:
   app_data: {}
   pgsql_data: {}
+  redis_data: {}
