@@ -12,11 +12,17 @@ for each project should note which environment variables are expected,
 but `docker-compose config` will also warn about missing variables:
 
 ```
-$ docker-compose -f traefik/docker-compose.yml config
+$ docker-compose config --quiet
 WARNING: The ACME_EMAIL variable is not set. Defaulting to a blank string.
 WARNING: The TRAEFIK_API_CREDENTIALS variable is not set. Defaulting to a blank string.
 WARNING: The TRAEFIK_API_FQDN variable is not set. Defaulting to a blank string.
 ```
+
+**Note:** Using `docker-compose --file path/docker-compose.yml config`
+to check for unset variables in a different project directory will cause
+`docker-compose` to look for file `.env` in the current working directory,
+not the project directory as expected. See osspsuite/docker-compose#1 and
+docker/compose#7600.
 
 * [Use Compose in production](https://docs.docker.com/compose/production/)
 * [Multiple Compose files](https://docs.docker.com/compose/extends/)
