@@ -15,3 +15,5 @@ NEXTCLOUD_TRUSTED_DOMAINS=cloud.example.com
 
 # Traefik
 This project assumes you have the traefik docker provider configured elsewhere.
+See the [traefik](https://github.com/osspsuite/docker-compose/tree/master/traefik)
+project in this repository for such a configuration.
