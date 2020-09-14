@@ -9,7 +9,7 @@ services:
     - --api.dashboard=true
     - --providers.docker=true
     - --providers.docker.exposedbydefault=false
-    - --providers.docker.nextwork=traefik_proxy
+    - --providers.docker.network=traefik_proxy
     - --entrypoints.web.address=:80
     - --entrypoints.websecure.address=:443
     - --certificatesresolvers.letsencrypt.acme.tlschallenge=true
@@ -32,7 +32,7 @@ services:
       target: 80
     - published: 443
       target: 443
-    restart: always
+    restart: unless-stopped
     volumes:
     - /etc/localtime:/etc/localtime:ro
     - /var/run/docker.sock:/var/run/docker.sock:rw
