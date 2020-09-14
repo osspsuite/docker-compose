@@ -1,0 +1,29 @@
+networks:
+  traefik_proxy:
+    external: true
+    name: traefik_proxy
+services:
+  portainer:
+    command: -H unix:///var/run/docker.sock
+    container_name: portainer
+    expose:
+    - '9000'
+    - '8000'
+    image: ${PORTAINER_IMAGE}${PORTAINER_IMAGE_TAG}
+    labels:
+      traefik.docker.network: traefik_proxy
+      traefik.enable: 'true'
+      traefik.http.routers.portainer.entrypoints: websecure
+      traefik.http.routers.portainer.rule: Host(`${PORTAINER_PUBLIC_FQDN}`)
+      traefik.http.routers.portainer.tls.certresolver: letsencrypt
+      traefik.http.services.portainer.loadbalancer.server.port: '9000'
+    networks:
+      traefik_proxy: null
+    restart: unless-stopped
+    volumes:
+    - /etc/localtime:/etc/localtime:ro
+    - /var/run/docker.sock:/var/run/docker.sock:rw
+    - portainer_data:/data:rw
+version: '3.8'
+volumes:
+  portainer_data: {}
