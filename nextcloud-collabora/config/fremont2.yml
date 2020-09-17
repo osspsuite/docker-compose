@@ -1,0 +1,78 @@
+networks:
+  traefik_proxy:
+    external: 'true'
+    name: traefik_proxy
+services:
+  app:
+    build:
+      args:
+        nextcloud_version: 19-apache
+      context: dockerfiles/nextcloud
+    container_name: nextcloud
+    env_file: ./config/.env.fremont2
+    expose:
+      - '80'
+    image: osspsuite/nextcloud:19-apache
+    labels:
+      traefik.docker.network: traefik_proxy
+      traefik.enable: 'true'
+      traefik.http.routers.nextcloud.entrypoints: websecure
+      traefik.http.routers.nextcloud.rule: Host(`${NEXTCLOUD_PUBLIC_FQDN}`)
+      traefik.http.routers.nextcloud.tls.certresolver: letsencrypt
+      traefik.http.services.nextcloud.loadbalancer.server.port: '80'
+    networks:
+    - traefik_proxy
+    - default
+    restart: unless-stopped
+    volumes:
+    - /etc/localtime:/etc/localtime:ro
+    - app_data:/var/www/html
+  collabora:
+    container_name: nextcloud-collabora
+    environment:
+      extra_params: --o:ssl.enable=false --o:ssl.terminate=true
+    expose:
+      - '9980'
+    labels:
+      traefik.docker.network: traefik_proxy
+      traefik.enable: 'true'
+      traefik.http.routers.collabora.entrypoints: websecure
+      traefik.http.routers.collabora.rule: Host(`${NEXTCLOUD_PUBLIC_FQDN}`)
+      traefik.http.routers.collabora.tls.certresolver: letsencrypt
+      traefik.http.services.collabora.loadbalancer.server.port: '9980'
+    networks:
+    - traefik_proxy
+    - default
+    restart: unless-stopped
+    volumes:
+    - /etc/localtime:/etc/localtime:ro
+  db:
+    container_name: nextcloud-postgres
+    image: postgres:12.4
+    env_file: ./config/.env.fremont2
+    restart: unless-stopped
+    volumes:
+    - /etc/localtime:/etc/localtime:ro
+    - pg_data:/var/lib/postgresql/data
+  redis:
+    #command: redis-server --requirepass ${REDIS_PASSWORD}
+    container_name: nextcloud-redis
+    restart: unless-stopped
+    volumes:
+    - /etc/localtime:/etc/localtime:ro
+    - type: tmpfs
+      target: /var/lib/redis
+version: '3.8'
+volumes:
+  app_data:
+    name: ${NEXTCLOUD_APP_VOLUME}
+  pg_data:
+    name: ${NEXTCLOUD_DB_VOLUME}
+
+# Redis 6
+# ACL model has changed since version 5.
+# If more options than the single `--requirepass` are needed,
+# it's time to pass in redis.conf instead.
+# https://github.com/nextcloud/docker/issues/1179
+# See REDIS_PASSWORD above. Commented out for now because
+# webhippie/redis is still on Redis 5.

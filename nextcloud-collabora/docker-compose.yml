@@ -1,0 +1,28 @@
+services:
+  app:
+    depends_on:
+    - collabora
+    - db
+    - redis
+    image: nextcloud:latest
+  collabora:
+    image: collabora/code:latest
+  db:
+    image: postgres:latest
+  redis:
+    image: webhippie/redis:latest
+version: '3.8'
+
+# If collabora starts up with the other services,
+# nextcloud database setup fails. But it works
+# to start app and its dependencies first, then
+# start collabora.
+# Probably move collabora into its own docker-compose
+# project, which kind of makes sense anyway since it
+# will have its own traefik rules and exposure.
+# Using wait-for-it seems to address the problem.
+# collabora may be a red herring. I think the problem
+# is a race condition when using environment variables
+# to set up the database. Adding wait-for-it to nextcloud
+# service seems to solve the problem, even when
+# collabora is started at the same time.

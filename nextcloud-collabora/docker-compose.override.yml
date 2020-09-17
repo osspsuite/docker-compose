@@ -1,0 +1,74 @@
+# Local development and testing
+#
+# docker-compose automatically merges this file with docker-compose.yml
+# when called with no file arguments:
+#   $ docker-compose
+# or with the default compose file:
+#   $ docker-compose -f docker-compose.yml
+#
+# For production, specify both the default compose file and at least one
+# additional file, and overrides from this file will not be merged:
+#   $ docker-compose -f docker-compose.yml -f config/production.yml
+#
+# https://docs.docker.com/compose/production/
+
+services:
+  app:
+    build:
+      args:
+        nextcloud_version: 19-apache
+      context: dockerfiles/nextcloud
+    environment:
+    - COLLABORA_EXTERNAL_HOST=192.168.1.12
+    - COLLABORA_EXTERNAL_PORT=9980
+    - CUSTOM_APPS=calendar deck notes tasks richdocuments announcementcenter
+    - NEXTCLOUD_ADMIN_USER=admin
+    - NEXTCLOUD_ADMIN_PASSWORD=ncpassword
+    - NEXTCLOUD_TRUSTED_DOMAINS=localhost 192.168.1.12
+    - OVERWRITEHOST=192.168.1.12
+    - OVERWRITEPROTOCOL=http
+    - POSTGRES_DB=postgres
+    - POSTGRES_HOST=db
+    - POSTGRES_PASSWORD=pgpassword
+    - POSTGRES_USER=postgres
+    - REDIS_HOST=redis
+    #- REDIS_PASSWORD=password
+    image: osspsuite/nextcloud:19-apache
+    ports:
+    - '192.168.1.12:80:80'
+    volumes:
+    - /etc/localtime:/etc/localtime:ro
+    - app_data:/var/www/html
+  collabora:
+    environment:
+      extra_params: --o:ssl.enable=false
+    ports:
+    - '192.168.1.12:9980:9980'
+    volumes:
+    - /etc/localtime:/etc/localtime:ro
+  db:
+    environment:
+    - POSTGRES_DB=postgres
+    - POSTGRES_PASSWORD=pgpassword
+    - POSTGRES_USER=postgres
+    volumes:
+    - /etc/localtime:/etc/localtime:ro
+    - pg_data:/var/lib/postgresql/data
+  redis:
+    #command: redis-server --requirepass ${REDIS_PASSWORD}
+    volumes:
+    - /etc/localtime:/etc/localtime:ro
+    - type: tmpfs
+      target: /var/lib/redis
+version: '3.8'
+volumes:
+  app_data: {}
+  pg_data: {}
+
+# Redis 6
+# ACL model has changed since version 5.
+# If more options than the single `--requirepass` are needed,
+# it's time to pass in redis.conf instead.
+# https://github.com/nextcloud/docker/issues/1179
+# See REDIS_PASSWORD above. Commented out for now because
+# webhippie/redis is still on Redis 5.
