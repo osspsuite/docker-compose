@@ -1,0 +1,16 @@
+services:
+  portainer:
+    command: -H unix:///var/run/docker.sock
+    container_name: portainer
+    ports:
+    - '127.0.0.1:9000:9000'
+    image: portainer/portainer-ce:2.0.0
+    restart: unless-stopped
+    volumes:
+    - /etc/localtime:/etc/localtime:ro
+    - /var/run/docker.sock:/var/run/docker.sock:rw
+    - data:/data:rw
+version: '3.8'
+volumes:
+  data:
+    name: portainer_data

@@ -1,0 +1,4 @@
+services:
+  portainer:
+    image: portainer/portainer:latest
+version: '3.8'
