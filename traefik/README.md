@@ -11,7 +11,7 @@ The credentials are in `user:hash` format from `htpasswd`. And, of course, there
 docker images to provide `htpasswd` so that you don't need to find it separately.
 
 For example:
-`docker run --rm xmartlabs/htpasswd user password`
+`docker run --rm -it xmartlabs/htpasswd user password`
 
 **Note:** in an environment file, you do not need to double dollar signs in the password
 hash. If you put credentials directly in `docker-compose.yml` then remember to double
