@@ -1,16 +1,50 @@
 # docker-compose
 Various configurations for Docker Compose projects
 
-The projects with *traefik* in the name are intended to be used in
-environments where the project in the base `traefik` directory is
-also running.
+- [Use Compose in production](https://docs.docker.com/compose/production/)
+- [Multiple Compose files](https://docs.docker.com/compose/extends/)
 
-The projects also assume environment variables are placed in a file
-called `.env` in each project directory next to `docker-compose.yml`,
-but these variable files have been excluded from git. The documentation
-for each project should note which environment variables are expected,
-but `docker-compose config` will also warn about missing variables:
+The project structure is intended to align with the links above,
+using multiple Compose files per project. While this repository
+*can* be checked out in the deployment environment, the intention
+is to have the repository checked out locally, for local testing
+as well as remote deployment.
 
+See
+https://docs.docker.com/engine/security/https/
+for information about securely exposing remote Docker daemons, and
+https://docs.docker.com/engine/reference/commandline/cli/#environment-variables
+for information about configuring your local Docker environment to
+communicate securely with remote daemons
+(`DOCKER_HOST`, `DOCKER_TLS_VERIFY`, `DOCKER_CERT_PATH`, etc).
+
+## Project structure
+The projects with *traefik* in the name do not align with this structure
+and are being phased out.
+
+- `docker-compose.yml` is the basic or canonical definition of services
+- `docker-compose.override.yml` is merged automatically by `docker-compose`
+  for local development and testing
+- YAML files in `config/` is a convention for this repository to store
+  the Docker Compose details for remote deployments
+
+Local development example: (assumes `DOCKER_HOST` is local)
+```
+docker-compose up -d
+```
+will by default load `docker-compose.yml` and merge `docker-compose.override.yml`
+if present.
+
+Remote deployment example: (assumes `DOCKER_HOST` is remote)
+```
+docker-compose -f docker-compose.yml -f config/prod-eu-2.yml --env-file config/.env.eu-2 up -d
+```
+*will not* merge `docker-compose.override.yml` even if present. Note the
+file chaining here. The default file `docker-compose.yml` is given
+explicitly, followed by another non-default file.
+
+`docker-compose config` can help catch missing variables, but note
+the caveat below:
 ```
 $ docker-compose config --quiet
 WARNING: The ACME_EMAIL variable is not set. Defaulting to a blank string.
@@ -24,8 +58,6 @@ to check for unset variables in a different project directory will cause
 not the project directory as expected. See osspsuite/docker-compose#1 and
 docker/compose#7600.
 
-* [Use Compose in production](https://docs.docker.com/compose/production/)
-* [Multiple Compose files](https://docs.docker.com/compose/extends/)
-
-A shell script or some aliases in this base directory would probably
-help make it easier to work with this structure.
+## To do
+- [ ] A shell script or some aliases would help with the long command
+      lines like in the remote deployment example above
