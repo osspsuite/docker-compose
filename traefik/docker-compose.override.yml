@@ -1,0 +1,16 @@
+services:
+  traefik:
+    command:
+    - --api.insecure=true
+    - --api.dashboard=true
+    - --providers.docker=true
+    image: traefik:v2.2
+    labels:
+      traefik.http.routers.api.rule: Host(`traefik.docker.localhost`)
+    ports:
+      - '80:80'
+      - '8080:8080'
+    volumes:
+    - /etc/localtime:/etc/localtime:ro
+    - /var/run/docker.sock:/var/run/docker.sock:rw
+version: '3.8'

@@ -209,6 +209,6 @@ configure_richdocuments() {
 #file_env CUSTOM_APPS
 install_custom_apps
 # TODO: Don't configure richdocuments if not installed
-configure_richdocuments
+#configure_richdocuments
 
 exec "$@"

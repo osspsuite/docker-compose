@@ -1,3 +1,5 @@
+# Production
+
 networks:
   traefik_proxy:
     external: 'true'
@@ -30,14 +32,15 @@ services:
   collabora:
     container_name: nextcloud-collabora
     environment:
-      extra_params: --o:ssl.enable=false --o:ssl.terminate=true
+      extra_params: --o:ssl.enable=false --o:ssl.termination=true
+      domain: cloud\\.bdubeit\\.com
     expose:
       - '9980'
     labels:
       traefik.docker.network: traefik_proxy
       traefik.enable: 'true'
-      traefik.http.routers.collabora.entrypoints: websecure
-      traefik.http.routers.collabora.rule: Host(`${NEXTCLOUD_PUBLIC_FQDN}`)
+      traefik.http.routers.collabora.entrypoints: wopisecure
+      traefik.http.routers.collabora.rule: Host(`${COLLABORA_EXTERNAL_HOST}`)
       traefik.http.routers.collabora.tls.certresolver: letsencrypt
       traefik.http.services.collabora.loadbalancer.server.port: '9980'
     networks:

@@ -1,0 +1,44 @@
+networks:
+  traefik_proxy:
+    external: true
+    name: traefik_proxy
+services:
+  traefik:
+    command:
+    - --api=true
+    - --api.insecure=false
+    - --api.dashboard=true
+    - --providers.docker=true
+    - --providers.docker.exposedbydefault=false
+    - --providers.docker.network=traefik_proxy
+    - --entrypoints.web.address=:80
+    - --entrypoints.websecure.address=:443
+    - --entrypoints.wopisecure.address=:9980
+    - --certificatesresolvers.letsencrypt.acme.tlschallenge=true
+    - --certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL}
+    - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+    container_name: traefik
+    image: traefik:v2.2
+    labels:
+      traefik.enable: "true"
+      traefik.http.middlewares.apiauth.basicauth.users: ${TRAEFIK_API_CREDENTIALS}
+      traefik.http.routers.api.entrypoints: websecure
+      traefik.http.routers.api.middlewares: apiauth
+      traefik.http.routers.api.rule: Host(`${TRAEFIK_API_FQDN}`)
+      traefik.http.routers.api.service: api@internal
+      traefik.http.routers.api.tls.certresolver: letsencrypt
+    networks:
+      traefik_proxy: null
+    ports:
+    - '80:80'
+    - '443:443'
+    - '9980:9980'
+    restart: unless-stopped
+    volumes:
+    - /etc/localtime:/etc/localtime:ro
+    - /var/run/docker.sock:/var/run/docker.sock:rw
+    - letsencrypt:/letsencrypt:rw
+version: '3.8'
+volumes:
+  letsencrypt:
+    name: traefik-letsencrypt
