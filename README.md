@@ -18,6 +18,13 @@ for information about configuring your local Docker environment to
 communicate securely with remote daemons
 (`DOCKER_HOST`, `DOCKER_TLS_VERIFY`, `DOCKER_CERT_PATH`, etc).
 
+Once secure access to remote daemons is in place, a *local* instance
+of something like
+https://www.portainer.io/
+can be configured for access to both local and remote Docker daemons.
+The project in `portainer-traefik` is for running a *remote* instance
+of Portainer, with TLS terminated by Traefik.
+
 ## Project structure
 The projects ending with *-traefik* in the name do not align with this structure
 and are being phased out.
