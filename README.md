@@ -19,7 +19,7 @@ communicate securely with remote daemons
 (`DOCKER_HOST`, `DOCKER_TLS_VERIFY`, `DOCKER_CERT_PATH`, etc).
 
 ## Project structure
-The projects with *traefik* in the name do not align with this structure
+The projects ending with *-traefik* in the name do not align with this structure
 and are being phased out.
 
 - `docker-compose.yml` is the basic or canonical definition of services
