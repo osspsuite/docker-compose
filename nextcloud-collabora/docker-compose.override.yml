@@ -46,6 +46,18 @@ services:
     - '192.168.1.12:9980:9980'
     volumes:
     - /etc/localtime:/etc/localtime:ro
+  cron:
+    build:
+      args:
+        nextcloud_version: 19-apache
+      context: dockerfiles/nextcloud
+    depends_on:
+      - db
+      - redis
+    entrypoint: /cron.sh
+    image: osspsuite/nextcloud:19-apache
+    volumes:
+    - app_data:/var/www/html
   db:
     environment:
     - POSTGRES_DB=postgres

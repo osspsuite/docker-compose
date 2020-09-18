@@ -49,6 +49,19 @@ services:
     restart: unless-stopped
     volumes:
     - /etc/localtime:/etc/localtime:ro
+  cron:
+    build:
+      args:
+        nextcloud_version: 19-apache
+      context: dockerfiles/nextcloud
+    container_name: nextcloud-cron
+    depends_on:
+      - db
+      - redis
+    entrypoint: /cron.sh
+    image: osspsuite/nextcloud:19-apache
+    volumes:
+    - app_data:/var/www/html
   db:
     container_name: nextcloud-postgres
     image: postgres:12.4
