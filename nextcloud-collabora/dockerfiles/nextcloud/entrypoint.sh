@@ -189,6 +189,7 @@ fi
 
 install_custom_apps() {
     # https://github.com/nextcloud/docker/issues/820
+    #file_env CUSTOM_APPS
     set +u
     set -- $CUSTOM_APPS # don't quote variable here
     while [ -n "$1" ]; do
@@ -200,15 +201,13 @@ install_custom_apps() {
     set -u
 }
 
-configure_richdocuments() {
-    # Configure richdocuments (Collabora Online)
-    run_as "php /var/www/html/occ config:app:set richdocuments wopi_url --value=${COLLABORA_EXTERNAL_HOST}:${COLLABORA_EXTERNAL_PORT}"
-    run_as "php /var/www/html/occ config:app:set richdocuments public_wopi_url --value=${COLLABORA_EXTERNAL_HOST}:${COLLABORA_EXTERNAL_PORT}"
-}
+# Unused for now
+#configure_richdocuments() {
+#    # Configure richdocuments (Collabora Online)
+#    run_as "php /var/www/html/occ config:app:set richdocuments wopi_url --value=${COLLABORA_EXTERNAL_HOST}:${COLLABORA_EXTERNAL_PORT}"
+#    run_as "php /var/www/html/occ config:app:set richdocuments public_wopi_url --value=${COLLABORA_EXTERNAL_HOST}:${COLLABORA_EXTERNAL_PORT}"
+#}
 
-#file_env CUSTOM_APPS
 install_custom_apps
-# TODO: Don't configure richdocuments if not installed
-#configure_richdocuments
 
 exec "$@"
