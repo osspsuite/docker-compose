@@ -19,7 +19,7 @@ services:
       traefik.docker.network: traefik_proxy
       traefik.enable: 'true'
       traefik.http.routers.nextcloud.entrypoints: websecure
-      traefik.http.routers.nextcloud.rule: Host(`${NEXTCLOUD_PUBLIC_FQDN}`)
+      traefik.http.routers.nextcloud.rule: Host(`cloud.bdubeit.com`)
       traefik.http.routers.nextcloud.tls.certresolver: letsencrypt
       traefik.http.services.nextcloud.loadbalancer.server.port: '80'
     networks:
@@ -40,7 +40,7 @@ services:
       traefik.docker.network: traefik_proxy
       traefik.enable: 'true'
       traefik.http.routers.collabora.entrypoints: wopisecure
-      traefik.http.routers.collabora.rule: Host(`${COLLABORA_EXTERNAL_HOST}`)
+      traefik.http.routers.collabora.rule: Host(`collabora.bdubeit.com`)
       traefik.http.routers.collabora.tls.certresolver: letsencrypt
       traefik.http.services.collabora.loadbalancer.server.port: '9980'
     networks:
