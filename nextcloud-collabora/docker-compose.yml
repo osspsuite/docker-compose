@@ -4,11 +4,19 @@ services:
     - collabora
     - db
     - redis
-    image: nextcloud:latest
+    image: nextcloud:apache
   collabora:
     image: collabora/code:latest
+  cron:
+    depends_on:
+      - db
+      - redis
+    entrypoint: /cron.sh
+    image: nextcloud:apache
   db:
     image: postgres:latest
+  mail:
+    image: tozd/postfix:ubuntu-trusty
   redis:
     image: webhippie/redis:latest
 version: '3.8'

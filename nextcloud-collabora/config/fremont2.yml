@@ -70,6 +70,13 @@ services:
     volumes:
     - /etc/localtime:/etc/localtime:ro
     - pg_data:/var/lib/postgresql/data
+  mail:
+    container_name: nextcloud-mail
+    env_file: ./config/.env.fremont2
+    image: tozd/postfix:ubuntu-trusty
+    volumes:
+    - mail_log:/var/log/postfix
+    - mail_spool:/var/spool/postfix
   redis:
     #command: redis-server --requirepass ${REDIS_PASSWORD}
     container_name: nextcloud-redis
@@ -82,6 +89,10 @@ version: '3.8'
 volumes:
   app_data:
     name: ${NEXTCLOUD_APP_VOLUME}
+  mail_log:
+    name: ${NEXTCLOUD_MAIL_LOG_VOLUME}
+  mail_spool:
+    name: ${NEXTCLOUD_MAIL_SPOOL_VOLUME}
   pg_data:
     name: ${NEXTCLOUD_DB_VOLUME}
 

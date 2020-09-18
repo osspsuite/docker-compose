@@ -19,13 +19,13 @@ services:
         nextcloud_version: 19-apache
       context: dockerfiles/nextcloud
     environment:
-    - COLLABORA_EXTERNAL_HOST=192.168.1.12
+    - COLLABORA_EXTERNAL_HOST=${LOCAL_IP}
     - COLLABORA_EXTERNAL_PORT=9980
     - CUSTOM_APPS=calendar deck notes tasks richdocuments announcementcenter
     - NEXTCLOUD_ADMIN_USER=admin
     - NEXTCLOUD_ADMIN_PASSWORD=ncpassword
-    - NEXTCLOUD_TRUSTED_DOMAINS=localhost 192.168.1.12
-    - OVERWRITEHOST=192.168.1.12
+    - NEXTCLOUD_TRUSTED_DOMAINS=localhost ${LOCAL_IP}
+    - OVERWRITEHOST=${LOCAL_IP}
     - OVERWRITEPROTOCOL=http
     - POSTGRES_DB=postgres
     - POSTGRES_HOST=db
@@ -35,7 +35,7 @@ services:
     #- REDIS_PASSWORD=password
     image: osspsuite/nextcloud:19-apache
     ports:
-    - '192.168.1.12:80:80'
+    - '${LOCAL_IP}:80:80'
     volumes:
     - /etc/localtime:/etc/localtime:ro
     - app_data:/var/www/html
@@ -43,7 +43,7 @@ services:
     environment:
       extra_params: --o:ssl.enable=false
     ports:
-    - '192.168.1.12:9980:9980'
+    - '${LOCAL_IP}:9980:9980'
     volumes:
     - /etc/localtime:/etc/localtime:ro
   cron:
@@ -66,6 +66,14 @@ services:
     volumes:
     - /etc/localtime:/etc/localtime:ro
     - pg_data:/var/lib/postgresql/data
+  mail:
+    image: tozd/postfix:ubuntu-trusty
+    environment:
+    - MAILNAME=mail.docker.localhost
+    - MY_NETWORKS=172.16.0.0/12 192.168.0.0/16
+    volumes:
+    - mail_log:/var/log/postfix
+    - mail_spool:/var/spool/postfix
   redis:
     #command: redis-server --requirepass ${REDIS_PASSWORD}
     volumes:
@@ -75,6 +83,8 @@ services:
 version: '3.8'
 volumes:
   app_data: {}
+  mail_log: {}
+  mail_spool: {}
   pg_data: {}
 
 # Redis 6
