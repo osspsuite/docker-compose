@@ -8,13 +8,13 @@ services:
   app:
     build:
       args:
-        nextcloud_version: 19-apache
+        nextcloud_version: ${NEXTCLOUD_VERSION}
       context: dockerfiles/nextcloud
     container_name: nextcloud
     env_file: ./config/.env.fremont2
     expose:
       - '80'
-    image: osspsuite/nextcloud:19-apache
+    image: osspsuite/nextcloud:${NEXTCLOUD_VERSION}
     labels:
       traefik.docker.network: traefik_proxy
       traefik.enable: 'true'
@@ -52,14 +52,14 @@ services:
   cron:
     build:
       args:
-        nextcloud_version: 19-apache
+        nextcloud_version: ${NEXTCLOUD_VERSION}
       context: dockerfiles/nextcloud
     container_name: nextcloud-cron
     depends_on:
       - db
       - redis
     entrypoint: /cron.sh
-    image: osspsuite/nextcloud:19-apache
+    image: osspsuite/nextcloud:${NEXTCLOUD_VERSION}
     volumes:
     - app_data:/var/www/html
   db:

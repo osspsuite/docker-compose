@@ -1,4 +1,4 @@
-ARG nextcloud_version=20-beta-apache
+ARG nextcloud_version=apache
 FROM nextcloud:${nextcloud_version}
 RUN apt-get update && apt-get upgrade -y \
     && rm -rf /ar/lib/apt/lists/*

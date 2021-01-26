@@ -16,7 +16,7 @@ services:
   app:
     build:
       args:
-        nextcloud_version: 19-apache
+        nextcloud_version: ${NEXTCLOUD_VERSION}
       context: dockerfiles/nextcloud
     environment:
     - COLLABORA_EXTERNAL_HOST=${LOCAL_IP}
@@ -33,7 +33,7 @@ services:
     - POSTGRES_USER=postgres
     - REDIS_HOST=redis
     #- REDIS_PASSWORD=password
-    image: osspsuite/nextcloud:19-apache
+    image: osspsuite/nextcloud:${NEXTCLOUD_VERSION}
     ports:
     - '${LOCAL_IP}:80:80'
     volumes:
@@ -47,15 +47,15 @@ services:
     volumes:
     - /etc/localtime:/etc/localtime:ro
   cron:
-    build:
-      args:
-        nextcloud_version: 19-apache
-      context: dockerfiles/nextcloud
+    #build:
+    #  args:
+    #    nextcloud_version: 20-beta-apache
+    #  context: dockerfiles/nextcloud
     depends_on:
       - db
       - redis
     entrypoint: /cron.sh
-    image: osspsuite/nextcloud:19-apache
+    image: osspsuite/nextcloud:${NEXTCLOUD_VERSION}
     volumes:
     - app_data:/var/www/html
   db:
